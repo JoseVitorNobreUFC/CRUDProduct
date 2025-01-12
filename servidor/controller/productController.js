@@ -2,20 +2,34 @@ import { ProductModel } from "../postgres/postgres.js"
 
 export const getAll = async (req, res) => {
     try {
-        const product = await ProductModel.findAll({})
-        if (product.length == 0) {
-            return res.status(200).json({
-                message: "Produto não encontrado"
+        const { filter, order } = req.query;
+
+        let products
+        if(!filter || !order) {
+            products = await ProductModel.findAll()
+        } else {
+            products = await ProductModel.findAll({
+                order: [
+                    [filter, order]
+                ],
             })
         }
-        return res.status(200).json(product)
+
+        if (products.length === 0) {
+            return res.status(200).json({
+                message: "Nenhum produto encontrado"
+            })
+        }
+
+        return res.status(200).json(products);
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).json({
-            "error": "Erro interno do servidor"
+            error: "Erro interno do servidor"
         })
     }
 }
+
 
 export const addProduct = async (req, res) => {
     const { name, description, price, isSellable } = req.body
@@ -86,6 +100,31 @@ export const deleteProduct = async (req, res) => {
         }
 
         return res.status(200).json({ message: "Produto deletado com sucesso" })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            error: "Erro interno do servidor"
+        })
+    }
+}
+
+export const findProductByName = async (req, res) => {
+    const { name } = req.params
+    
+    try {
+        const product = await ProductModel.findOne({
+            where: {
+                name: name
+            }
+        })
+
+        if (product === null) {
+            return res.status(404).json({
+                message: "Produto não encontrado"
+            })
+        }
+
+        return res.status(200).json(product)
     } catch (error) {
         console.error(error)
         return res.status(500).json({
