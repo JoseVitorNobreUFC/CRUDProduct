@@ -1,7 +1,3 @@
-Aqui está uma versão melhor formatada do seu README:
-
----
-
 # Projeto de Cadastro de Produtos
 
 Este projeto é uma aplicação **full-stack** composta por um back-end em **Node.js/Express** e um front-end em **React**. Ele permite a **listagem**, **adição**, **edição** e **exclusão** de produtos, com integração com um banco de dados **PostgreSQL**.
